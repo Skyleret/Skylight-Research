@@ -51,27 +51,16 @@ function showFloatingMenu() {
     document.addEventListener("mousedown", closeMenu);
 }
 
+// --- REPLACE YOUR executeHighlight AND handleSurgicalRemove WITH THIS ---
+
 async function executeHighlight(selection, isNoteMode, colorCode) {
     if (selection.toString().trim().length === 0) return;
     const range = selection.getRangeAt(0);
 
-    // MERGE LOGIC: Clean up any highlights inside the new selection
-    const allMarks = document.querySelectorAll('.research-highlight');
-    const overlapped = Array.from(allMarks).filter(m => selection.containsNode(m, true));
+    // Step 1: "Cut" this area out of any existing highlights (macOS Preview style)
+    await surgicalProcess(range);
 
-    for (const mark of overlapped) {
-        await deleteAnnotationData(mark.dataset.id);
-        const next = mark.nextSibling;
-        // The "?" prevents the 'contains' error
-        if (next?.classList?.contains("research-note") || next?.classList?.contains("research-editor")) {
-            next.remove();
-        }
-        const parent = mark.parentNode;
-        while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-        mark.remove();
-        parent.normalize();
-    }
-
+    // Step 2: Apply the new highlight to the now-clean area
     const ann = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         url: window.location.href,
@@ -92,18 +81,35 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
 
 async function handleSurgicalRemove(selection) {
     if (selection.rangeCount === 0) return;
-    const userRange = selection.getRangeAt(0);
+    const range = selection.getRangeAt(0);
+    // Just run the process without adding anything new after
+    await surgicalProcess(range);
+    selection.removeAllRanges();
+}
+
+/**
+ * THE MASTER BLADE: Splits or clears highlights based on a range
+ */
+async function surgicalProcess(userRange) {
     const allMarks = document.querySelectorAll('.research-highlight');
-    const targeted = Array.from(allMarks).filter(m => selection.containsNode(m, true));
+    
+    // Find highlights that touch the user selection
+    const targeted = Array.from(allMarks).filter(m => {
+        const r = document.createRange();
+        r.selectNodeContents(m);
+        return !(userRange.compareBoundaryPoints(Range.END_TO_START, r) >= 0 || 
+                 userRange.compareBoundaryPoints(Range.START_TO_END, r) <= 0);
+    });
 
     for (const mark of targeted) {
-        const color = mark.style.backgroundColor;
+        const oldColor = mark.style.backgroundColor;
         const markId = mark.dataset.id;
         const parent = mark.parentNode;
+        
         const markRange = document.createRange();
         markRange.selectNodeContents(mark);
 
-        // Identify fragments BEFORE we destroy the mark
+        // Calculate "Shrapnel" (prefix and suffix text)
         let t1 = "", t2 = "";
         if (markRange.compareBoundaryPoints(Range.START_TO_START, userRange) < 0) {
             const pre = markRange.cloneRange();
@@ -116,6 +122,7 @@ async function handleSurgicalRemove(selection) {
             t2 = post.toString();
         }
 
+        // Clean up the old mark
         await deleteAnnotationData(markId);
         const next = mark.nextSibling;
         if (next?.classList?.contains("research-note") || next?.classList?.contains("research-editor")) {
@@ -126,12 +133,11 @@ async function handleSurgicalRemove(selection) {
         mark.remove();
         parent.normalize();
 
-        if (t1.trim().length > 0) reHighlight(parent, t1, color);
-        if (t2.trim().length > 0) reHighlight(parent, t2, color);
+        // Put the leftover pieces back with the old color
+        if (t1.trim().length > 0) reHighlight(parent, t1, oldColor);
+        if (t2.trim().length > 0) reHighlight(parent, t2, oldColor);
     }
-    selection.removeAllRanges();
 }
-
 function reHighlight(parent, text, color) {
     const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
     let node;
@@ -141,9 +147,18 @@ function reHighlight(parent, text, color) {
             const range = document.createRange();
             range.setStart(node, idx);
             range.setEnd(node, idx + text.length);
-            const ann = { id: Date.now()+Math.random(), url: window.location.href, text: text, path: getDomPath(node), color: color, note: "" };
+            
+            const ann = { 
+                id: Date.now() + Math.random().toString(36).substr(2, 5), 
+                url: window.location.href, 
+                text: text, 
+                path: getDomPath(node), 
+                color: color, 
+                note: "" 
+            };
+            
             applyMarkToRange(range, ann);
-            saveToStorage(ann);
+            saveToStorage(ann); // This makes sure the split highlight stays split
             break;
         }
     }
@@ -174,7 +189,7 @@ function applyMarkToRange(range, ann) {
     const mark = document.createElement("mark");
     mark.className = "research-highlight";
     mark.dataset.id = ann.id;
-    mark.style.backgroundColor = ann.color;
+    mark.style.backgroundColor = ann.color; // CRITICAL
     if (ann.color === "transparent") mark.style.borderBottom = "1px dashed #ccc";
 
     try {
@@ -184,7 +199,8 @@ function applyMarkToRange(range, ann) {
         mark.appendChild(cont);
         range.insertNode(mark);
     }
-
+    
+    // Show note if it exists (important for reload)
     if (ann.note) {
         const disp = document.createElement("span");
         disp.className = "research-note";
@@ -193,7 +209,6 @@ function applyMarkToRange(range, ann) {
     }
     return mark;
 }
-
 // Storage helpers
 async function saveToStorage(ann) {
     const res = await chrome.storage.local.get("annotations");
