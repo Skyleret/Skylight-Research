@@ -3,6 +3,7 @@
     background-color: #ffeb3b !important;
     cursor: pointer;
     position: relative;
+    cursor: text !important;
     /* We keep highlights at a normal level so they don't float over menus */
 }
 
@@ -22,7 +23,7 @@
     /* Ridiculously high z-index */
     position: relative !important;
     z-index: 2147483647 !important; 
-    
+    cursor: default !important;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1) !important;
 }
 
