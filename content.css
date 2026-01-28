@@ -1,23 +1,27 @@
-.omni-highlight {
-    background-color: #ffeb3b !important;
+.research-highlight {
     position: relative !important;
+    padding: 1px 0;
+    cursor: pointer;
 }
 
-.omni-note-display {
+.research-note {
     background: #fdf6e3 !important;
     border-left: 3px solid #e6b422 !important;
     padding: 2px 8px !important;
     margin-left: 5px !important;
-    font-style: italic !important;
+    font-size: 0.85em !important;
     border-radius: 4px !important;
     display: inline-block !important;
+    color: #333 !important;
+    font-style: italic !important;
 }
 
-.omni-editor {
+.research-editor {
+    display: block !important;
+    width: 200px !important;
+    height: 60px !important;
+    margin-top: 5px !important;
     border: 2px solid #4a90e2 !important;
-    border-radius: 4px !important;
-    padding: 4px !important;
-    min-width: 150px !important;
+    padding: 5px !important;
     z-index: 2147483647 !important;
-    position: relative !important;
 }
