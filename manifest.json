@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "OmniResearch",
+  "version": "1.0",
+  "description": "Modern research tool for highlighting and project management.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "downloads",
+    "contextMenus"
+  ],
+  "action": {
+    "default_title": "Open Research Manager",
+    "default_popup": "manager.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OmniResearch Manager</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; background: #f4f7f9; display: flex; height: 100vh; margin: 0; }
+    #sidebar { width: 200px; background: #fff; border-right: 1px solid #ddd; padding: 20px; }
+    #content { flex: 1; padding: 40px; overflow-y: auto; }
+    .source-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .btn-primary { background: #007aff; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    h4 { margin: 0 0 10px 0; }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h3>Projects</h3>
+    <div id="project-list">General</div>
+  </div>
+  <div id="content">
+    <div style="display:flex; justify-content: space-between;">
+      <h2>Project: General Research</h2>
+      <button id="open-all" class="btn-primary">Open All Sources</button>
+    </div>
+    <div id="source-list"></div>
+  </div>
+  <script src="manager.js"></script>
+</body>
+</html>
