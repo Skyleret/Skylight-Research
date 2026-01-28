@@ -26,12 +26,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // 3. SURGICAL HIGHLIGHT (Adding)
 async function executeHighlight(selection, isNoteMode) {
     const range = selection.getRangeAt(0);
-    const container = range.commonAncestorContainer;
-    const parentMark = container.nodeType === 3 ? container.parentElement.closest('.omni-highlight') : container.closest('.omni-highlight');
+    
+    // 1. Identify all existing highlights touched by the new selection
+    const overlappingMarks = [];
+    const allMarks = document.querySelectorAll('.omni-highlight');
+    allMarks.forEach(mark => {
+        if (selection.containsNode(mark, true)) {
+            overlappingMarks.push(mark);
+        }
+    });
 
-    // If adding inside existing highlight, we don't double-highlight
-    if (parentMark && !isNoteMode) return; 
+    // 2. If overlaps exist, we perform a "Merge"
+    if (overlappingMarks.length > 0) {
+        // Expand the range to cover the start of the first overlap and end of the last
+        // This effectively "swallows" the old highlights into the new selection
+        const newText = await handleMerge(overlappingMarks, selection);
+        // After merging, the selection is updated. We proceed to highlight the new unified area.
+    }
 
+    // 3. Standard/Unified Highlight creation
     const ann = {
         id: Date.now().toString(),
         url: window.location.href,
@@ -46,92 +59,144 @@ async function executeHighlight(selection, isNoteMode) {
     if (mark) {
         selection.removeAllRanges();
         if (isNoteMode) createInlineEditor(mark, ann);
-        else saveToStorage(ann);
+        else await saveToStorage(ann);
     }
+}
+
+async function handleMerge(marks, selection) {
+    for (const mark of marks) {
+        const markId = mark.dataset.id;
+        await deleteAnnotationData(markId); // Remove from storage
+        
+        // Remove associated notes/editors
+        const next = mark.nextSibling;
+        if (next && (next.className === "omni-note-display" || next.className === "omni-editor")) {
+            next.remove();
+        }
+
+        // Unwrap the mark (keep text in DOM)
+        const parent = mark.parentNode;
+        while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+        mark.remove();
+        parent.normalize();
+    }
+    // The selection now spans the raw text, ready to be re-wrapped by executeHighlight
 }
 
 // 4. SURGICAL REMOVE (The "Blade" Logic)
 async function handleSurgicalRemove(selection) {
-    if (selection.rangeCount === 0 || selection.toString().trim().length === 0) {
-        // Fallback: If no selection, try to remove the highlight directly under the cursor
-        const mark = lastRightClickElement?.closest('mark.omni-highlight');
-        if (mark) removeHighlight(mark);
-        return;
-    }
-
-    const selectedText = selection.toString();
+    if (selection.rangeCount === 0) return;
+    const userRange = selection.getRangeAt(0);
     const allMarks = document.querySelectorAll('.omni-highlight');
-    let intersected = [];
 
-    allMarks.forEach(mark => {
-        if (selection.containsNode(mark, true)) intersected.push(mark);
-    });
+    for (const mark of Array.from(allMarks)) {
+        // Only process if the selection actually touches this specific highlight
+        if (selection.containsNode(mark, true)) {
+            const markRange = document.createRange();
+            markRange.selectNodeContents(mark);
 
-    for (let mark of intersected) {
-        const markId = mark.dataset.id;
-        const parent = mark.parentNode;
-        const fullText = mark.textContent;
+            // 1. Capture the data before we destroy the node
+            const markId = mark.dataset.id;
+            const parent = mark.parentNode;
+            await deleteAnnotationData(markId);
 
-        // Visual and Data Removal
-        await deleteAnnotationData(markId);
-        const next = mark.nextSibling;
-        if (next && next.className === "omni-note-display") next.remove();
-        
-        // Remove the <span>/ <mark> but keep the text
-        while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-        mark.remove();
-        parent.normalize();
-
-        // SPLITTING: Re-highlight parts that weren't selected
-        const parts = fullText.split(selectedText);
-        parts.forEach(textFragment => {
-            if (textFragment.trim().length > 1) { // Only re-highlight meaningful fragments
-                reHighlightFragment(parent, textFragment);
+            // Remove associated note UI
+            const next = mark.nextSibling;
+            if (next && (next.className === "omni-note-display" || next.className === "omni-editor")) {
+                next.remove();
             }
-        });
+
+            // 2. Identify "Shrapnel" - what remains AFTER the cut?
+            // Part A: Text before the selection
+            const preCutRange = markRange.cloneRange();
+            preCutRange.setEnd(userRange.startContainer, userRange.startOffset);
+            
+            // Part B: Text after the selection
+            const postCutRange = markRange.cloneRange();
+            postCutRange.setStart(userRange.endContainer, userRange.endOffset);
+
+            const preText = preCutRange.toString();
+            const postText = postCutRange.toString();
+
+            // 3. Unwrap the original mark
+            while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+            mark.remove();
+            parent.normalize();
+
+            // 4. Re-apply highlights to the fragments
+            if (preText.length > 0) reHighlightFragment(parent, preText);
+            if (postText.length > 0) reHighlightFragment(parent, postText);
+        }
     }
     selection.removeAllRanges();
 }
 
-// Helper: Re-applies highlight to "leftover" bits after a surgical cut
 function reHighlightFragment(parent, text) {
     const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while(node = walker.nextNode()) {
         const index = node.textContent.indexOf(text);
-        if (index !== -1) {
+        if (index !== -1 && !node.parentElement.closest('.omni-highlight')) {
             const range = document.createRange();
             range.setStart(node, index);
             range.setEnd(node, index + text.length);
+            
             const ann = {
-                id: Date.now().toString() + Math.random(),
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
                 url: window.location.href,
                 text: text,
                 path: getDomPath(node),
                 note: "",
                 timestamp: new Date().toISOString()
             };
+            
             applyMarkToRange(range, ann);
             saveToStorage(ann);
-            break;
+            break; 
         }
     }
 }
 
+// Helper: Re-applies highlight to "leftover" bits after a surgical cut
+
+
 // 5. EDITOR & RENDER LOGIC
 function createInlineEditor(mark, ann) {
+    // Check if an editor/note already exists to avoid duplicates
+    if (mark.nextSibling?.classList.contains("omni-editor") || 
+        mark.nextSibling?.classList.contains("omni-note-display")) {
+        return;
+    }
+
     const editor = document.createElement("span");
     editor.className = "omni-editor";
     editor.contentEditable = true;
-    editor.textContent = "type note...";
-    mark.after(editor);
-    editor.focus();
+    editor.textContent = ann.note || "type note...";
+    
+    // Style to ensure it doesn't "break" the line awkwardly
+    Object.assign(editor.style, {
+        display: "inline-block",
+        marginLeft: "4px",
+        padding: "0 4px",
+        border: "1px solid #4a90e2",
+        borderRadius: "3px",
+        backgroundColor: "#fff",
+        fontSize: "0.85em",
+        fontStyle: "normal",
+        color: "#333"
+    });
 
-    const range = document.createRange();
-    range.selectNodeContents(editor);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    mark.after(editor);
+    
+    // Focus and select text
+    setTimeout(() => {
+        editor.focus();
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }, 10);
 
     editor.onblur = async () => {
         const val = editor.textContent.trim();
@@ -139,9 +204,19 @@ function createInlineEditor(mark, ann) {
             editor.remove();
         } else {
             ann.note = val;
+            // Morph editor into display mode
             editor.className = "omni-note-display";
             editor.contentEditable = false;
-            saveToStorage(ann);
+            editor.removeAttribute('style'); // Use CSS classes instead
+            await saveToStorage(ann);
+        }
+    };
+
+    // Prevent 'Enter' from creating new divs inside the span
+    editor.onkeydown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            editor.blur();
         }
     };
 }
