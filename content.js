@@ -88,6 +88,7 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
         await saveToStorage(ann);
         if (isNoteMode) {
             // Tiny delay to ensure the DOM has painted the new <mark>
+            const firstMark = document.querySelector(`[data-id="${ann.id}"]`);
             setTimeout(() => createInlineEditor(mark, ann), 10);
         }
     }
@@ -250,29 +251,54 @@ function createInlineEditor(mark, ann) {
 }
 
 function applyMarkToRange(range, ann) {
-    const mark = document.createElement("mark");
-    mark.className = "research-highlight";
-    mark.dataset.id = ann.id;
-    mark.style.backgroundColor = ann.color;
+    const markClass = "research-highlight";
     
-    try {
-        const fragment = range.extractContents();
-        mark.appendChild(fragment);
-        range.insertNode(mark);
-    } catch (e) {
-        console.warn("Standard wrap failed.");
-        // If this fails on complex sites, the text is still there, just not wrapped.
-        return null; 
+    // Check if the selection is complex (crosses multiple nodes)
+    if (range.startContainer !== range.endContainer) {
+        const nodes = getNodesInRange(range);
+        nodes.forEach(node => {
+            const r = document.createRange();
+            r.selectNodeContents(node);
+            
+            if (node === range.startContainer) r.setStart(node, range.startOffset);
+            if (node === range.endContainer) r.setEnd(node, range.endOffset);
+            
+            const m = document.createElement("mark");
+            m.className = markClass;
+            m.dataset.id = ann.id;
+            m.style.backgroundColor = ann.color;
+            
+            try { r.surroundContents(m); } catch (e) { /* Skip non-text nodes */ }
+        });
+    } else {
+        // Simple selection within one text node
+        const m = document.createElement("mark");
+        m.className = markClass;
+        m.dataset.id = ann.id;
+        m.style.backgroundColor = ann.color;
+        try {
+            range.surroundContents(m);
+        } catch (e) {
+            // Last resort fallback
+            const frag = range.extractContents();
+            m.appendChild(frag);
+            range.insertNode(m);
+        }
     }
-    
+
+    // Attach Note to the last fragment of the highlight
     if (ann.note) {
-        const disp = document.createElement("span");
-        disp.className = "research-note";
-        disp.textContent = ann.note;
-        mark.after(disp);
+        const allNewMarks = document.querySelectorAll(`[data-id="${ann.id}"]`);
+        const lastMark = allNewMarks[allNewMarks.length - 1];
+        if (lastMark) {
+            const disp = document.createElement("span");
+            disp.className = "research-note";
+            disp.textContent = ann.note;
+            lastMark.after(disp);
+        }
     }
-    // Return the mark so createInlineEditor knows where to go
-    return mark;
+    
+    return document.querySelector(`[data-id="${ann.id}"]`);
 }
 // Helper to find every text node between two points
 function getNodesInRange(range) {
