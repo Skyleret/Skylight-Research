@@ -1,23 +1,28 @@
-/* Custom highlight style */
 .omni-highlight {
     background-color: #ffeb3b !important;
-    border-radius: 2px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    transition: transform 0.1s ease;
+    cursor: pointer;
 }
 
-.omni-highlight:hover {
-    transform: scale(1.05);
-    background-color: #fdd835 !important;
-}
-
-/* Tooltip for notes (future proofing) */
-.omni-note-indicator {
-    width: 8px;
-    height: 8px;
-    background: #4a90e2;
+/* The Inline Note */
+.omni-note-display {
+    font-family: 'Georgia', serif !important;
+    font-size: 0.9em !important;
+    color: #555 !important;
+    background: #fdf6e3 !important;
+    border-left: 2px solid #e6b422;
+    padding: 2px 8px;
+    margin-left: 5px;
     display: inline-block;
-    border-radius: 50%;
-    margin-left: -4px;
-    vertical-align: top;
+    font-style: italic;
+    border-radius: 4px;
+}
+
+/* The Live Editor */
+.omni-editor {
+    border: 1px solid #4a90e2;
+    outline: none;
+    background: #fff;
+    padding: 2px 5px;
+    min-width: 50px;
+    display: inline-block;
 }

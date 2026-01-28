@@ -1,130 +1,186 @@
-// --- INITIALIZATION ---
-const init = async () => {
-  const data = await chrome.storage.local.get("annotations");
-  const pageAnnotations = data.annotations?.filter(ann => ann.url === window.location.href) || [];
-  pageAnnotations.forEach(restoreHighlight);
-};
+/**
+ * OMNI RESEARCH - CONTENT SCRIPT
+ * Handles: Persistent Highlights, Inline Note Editing, and Context Menu Actions.
+ */
 
-// --- CORE HIGHLIGHTING LOGIC ---
-document.addEventListener("mouseup", (e) => {
-  const selection = window.getSelection();
-  const text = selection.toString().trim();
-  if (text.length > 0) {
-    showActionMenu(e.pageX, e.pageY, selection);
-  } else {
-    const menu = document.getElementById("omni-action-menu");
-    if (menu) menu.remove();
-  }
+let lastRightClickElement = null;
+
+// 1. TRACK CONTEXT: Keep track of what was clicked for the 'Remove' command
+document.addEventListener("contextmenu", (e) => {
+    lastRightClickElement = e.target;
 });
 
-function showActionMenu(x, y, selection) {
-  if (document.getElementById("omni-action-menu")) return;
+// 2. LISTEN: Commands from the Background Service Worker (Right-Click Menu)
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "DO_HIGHLIGHT") {
+        const selection = window.getSelection();
+        if (selection.toString().length > 0) {
+            executeHighlight(selection, request.mode === "note");
+        }
+    }
+    if (request.action === "REMOVE_AT_CURSOR") {
+        const mark = lastRightClickElement?.closest('mark.omni-highlight');
+        if (mark) {
+            removeHighlight(mark);
+        } else {
+            alert("No highlight found under cursor to remove.");
+        }
+    }
+});
 
-  const menu = document.createElement("div");
-  menu.id = "omni-action-menu";
-  Object.assign(menu.style, {
-    position: 'absolute', left: `${x}px`, top: `${y - 50}px`, zIndex: '2147483647',
-    background: '#333', color: 'white', padding: '8px 12px', borderRadius: '8px',
-    display: 'flex', gap: '10px', cursor: 'pointer', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-  });
+// 3. EXECUTE: Create the data object and trigger rendering
+async function executeHighlight(selection, isNoteMode) {
+    const range = selection.getRangeAt(0);
+    const ann = {
+        id: Date.now().toString(),
+        url: window.location.href,
+        title: document.title,
+        path: getDomPath(range.startContainer),
+        text: selection.toString(),
+        note: "",
+        timestamp: new Date().toISOString()
+    };
 
-  menu.innerHTML = `<span id="omni-h">Highlight</span> | <span id="omni-n">Note</span>`;
-  document.body.appendChild(menu);
+    const mark = applyMarkToRange(range, ann);
+    selection.removeAllRanges();
 
-  document.getElementById("omni-h").onclick = () => { execute(selection); menu.remove(); };
-  document.getElementById("omni-n").onclick = () => { 
-    const note = prompt("Enter note:"); 
-    if (note !== null) execute(selection, note);
-    menu.remove();
-  };
+    if (isNoteMode) {
+        createInlineEditor(mark, ann);
+    } else {
+        saveToStorage(ann);
+    }
 }
 
-async function execute(selection, note = "") {
-  const range = selection.getRangeAt(0);
-  const ann = {
-    id: Date.now().toString(),
-    url: window.location.href,
-    title: document.title,
-    text: selection.toString(),
-    path: getDomPath(range.startContainer),
-    note: note,
-    timestamp: new Date().toISOString()
-  };
+// 4. EDITOR: The "Type on the Page" interface
+function createInlineEditor(mark, ann) {
+    const editor = document.createElement("span");
+    editor.className = "omni-editor";
+    editor.contentEditable = true;
+    editor.textContent = "type note...";
+    
+    mark.after(editor);
+    editor.focus();
 
-  const data = await chrome.storage.local.get("annotations");
-  const all = data.annotations || [];
-  all.push(ann);
-  await chrome.storage.local.set({ annotations: all });
+    // Auto-select "type note..." so user can just start typing
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
 
-  applyMarkToRange(range, ann);
-  selection.removeAllRanges();
+    editor.onblur = async () => {
+        const val = editor.textContent.trim();
+        if (val === "" || val === "type note...") {
+            editor.remove();
+            ann.note = "";
+        } else {
+            ann.note = val;
+            editor.className = "omni-note-display";
+            editor.contentEditable = false;
+        }
+        saveToStorage(ann);
+    };
+
+    // Allow 'Enter' to save the note
+    editor.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            editor.blur();
+        }
+    };
 }
 
+// 5. RENDER: Physical insertion into the webpage
 function applyMarkToRange(range, ann) {
-  const mark = document.createElement("mark");
-  mark.className = "omni-highlight";
-  mark.dataset.id = ann.id;
-  if (ann.note) mark.title = `Note: ${ann.note}`;
-
-  // Double-click to delete logic
-  mark.addEventListener("dblclick", async (e) => {
-    if (confirm("Delete this highlight?")) {
-      const data = await chrome.storage.local.get("annotations");
-      const filtered = data.annotations.filter(a => a.id !== ann.id);
-      await chrome.storage.local.set({ annotations: filtered });
-      
-      // Un-wrap the mark
-      const parent = mark.parentNode;
-      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-      mark.remove();
-      parent.normalize(); 
+    const mark = document.createElement("mark");
+    mark.className = "omni-highlight";
+    mark.dataset.id = ann.id;
+    
+    try {
+        range.surroundContents(mark);
+    } catch (e) {
+        // Fallback for complex selections spanning multiple tags
+        const contents = range.extractContents();
+        mark.appendChild(contents);
+        range.insertNode(mark);
     }
-  });
 
-  try {
-    range.surroundContents(mark);
-  } catch (e) {
-    const contents = range.extractContents();
-    mark.appendChild(contents);
-    range.insertNode(mark);
-  }
+    // If we're restoring from storage, show the note display
+    if (ann.note) {
+        const noteDisp = document.createElement("span");
+        noteDisp.className = "omni-note-display";
+        noteDisp.textContent = ann.note;
+        mark.after(noteDisp);
+    }
+    return mark;
 }
 
-function restoreHighlight(ann) {
-  const parent = document.querySelector(ann.path);
-  if (!parent) return;
-
-  const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT, null, false);
-  let node;
-  while(node = walker.nextNode()) {
-    const index = node.textContent.indexOf(ann.text);
-    if (index !== -1) {
-      const range = document.createRange();
-      range.setStart(node, index);
-      range.setEnd(node, index + ann.text.length);
-      applyMarkToRange(range, ann);
-      break;
-    }
-  }
+// 6. STORAGE & RECOVERY
+async function saveToStorage(ann) {
+    const data = await chrome.storage.local.get("annotations");
+    const all = data.annotations || [];
+    // If updating an existing note, replace it. Otherwise, add new.
+    const index = all.findIndex(a => a.id === ann.id);
+    if (index > -1) { all[index] = ann; } else { all.push(ann); }
+    await chrome.storage.local.set({ annotations: all });
 }
+
+async function removeHighlight(mark) {
+    const id = mark.dataset.id;
+    const data = await chrome.storage.local.get("annotations");
+    const filtered = (data.annotations || []).filter(a => a.id !== id);
+    await chrome.storage.local.set({ annotations: filtered });
+    
+    // Clean up associated UI
+    if (mark.nextSibling && mark.nextSibling.className === "omni-note-display") {
+        mark.nextSibling.remove();
+    }
+
+    const parent = mark.parentNode;
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    mark.remove();
+    parent.normalize();
+}
+
+// Restore on Page Load
+const init = async () => {
+    const data = await chrome.storage.local.get("annotations");
+    const pageAnnotations = data.annotations?.filter(ann => ann.url === window.location.href) || [];
+    pageAnnotations.forEach(ann => {
+        const parent = document.querySelector(ann.path);
+        if (!parent) return;
+        const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while(node = walker.nextNode()) {
+            const index = node.textContent.indexOf(ann.text);
+            if (index !== -1) {
+                const range = document.createRange();
+                range.setStart(node, index);
+                range.setEnd(node, index + ann.text.length);
+                applyMarkToRange(range, ann);
+                break;
+            }
+        }
+    });
+};
 
 function getDomPath(el) {
-  if (!el || el.nodeType !== 1) el = el.parentElement;
-  const stack = [];
-  while (el && el.parentNode != null) {
-    let sibIndex = 0, sibCount = 0;
-    for (let i = 0; i < el.parentNode.childNodes.length; i++) {
-      let sib = el.parentNode.childNodes[i];
-      if (sib.nodeName == el.nodeName) {
-        if (sib === el) sibIndex = sibCount;
-        sibCount++;
-      }
+    if (!el || el.nodeType !== 1) el = el.parentElement;
+    const stack = [];
+    while (el && el.parentNode != null) {
+        let sibIndex = 0, sibCount = 0;
+        for (let i = 0; i < el.parentNode.childNodes.length; i++) {
+            let sib = el.parentNode.childNodes[i];
+            if (sib.nodeName == el.nodeName) {
+                if (sib === el) sibIndex = sibCount;
+                sibCount++;
+            }
+        }
+        stack.unshift(`${el.nodeName.toLowerCase()}:nth-of-type(${sibIndex + 1})`);
+        el = el.parentNode;
+        if (el.nodeName === 'HTML') break;
     }
-    stack.unshift(`${el.nodeName.toLowerCase()}:nth-of-type(${sibIndex + 1})`);
-    el = el.parentNode;
-    if (el.nodeName === 'HTML') break;
-  }
-  return stack.join(" > ");
+    return stack.join(" > ");
 }
 
 init();

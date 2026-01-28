@@ -1,18 +1,27 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "open_sources") {
-    message.urls.forEach(url => {
-      chrome.tabs.create({ url, active: false });
-    });
-  }
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "add-highlight",
+    title: "Add Highlight",
+    contexts: ["selection"]
+  });
+  chrome.contextMenus.create({
+    id: "add-note",
+    title: "Add Note (Inline)",
+    contexts: ["selection"]
+  });
+  chrome.contextMenus.create({
+    id: "remove-highlight",
+    title: "Remove Highlight",
+    contexts: ["all"] // "all" allows clicking on existing highlights
+  });
+});
 
-  if (message.action === "download_source") {
-    const blobData = JSON.stringify(message.data, null, 2);
-    const url = "data:application/json;base64," + btoa(blobData);
-    
-    chrome.downloads.download({
-      url: url,
-      filename: `research_${message.data.projectId}.json`,
-      saveAs: true
-    });
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "add-highlight") {
+    chrome.tabs.sendMessage(tab.id, { action: "DO_HIGHLIGHT", mode: "simple" });
+  } else if (info.menuItemId === "add-note") {
+    chrome.tabs.sendMessage(tab.id, { action: "DO_HIGHLIGHT", mode: "note" });
+  } else if (info.menuItemId === "remove-highlight") {
+    chrome.tabs.sendMessage(tab.id, { action: "REMOVE_AT_CURSOR" });
   }
 });
