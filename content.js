@@ -58,27 +58,18 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
     
     const originalText = selection.toString();
     const range = selection.getRangeAt(0);
-    
-    // Find a stable parent (the closest DIV, P, or LI)
     const container = range.commonAncestorContainer;
     const parent = container.nodeType === 3 ? container.parentNode : container;
     
-    // CALCULATE PIN: How many characters from the start of the 'parent' is this selection?
     const preRange = document.createRange();
     preRange.selectNodeContents(parent);
     preRange.setEnd(range.startContainer, range.startOffset);
     const startOffsetInParent = preRange.toString().length;
 
-    // 1. Clear old highlights and migrate notes
     const oldNotes = await surgicalProcess(range, colorCode);
 
-    // 2. RE-PIN: Find the exact same spot in the "clean" DOM
     const newRange = findRangeWithContext(parent, originalText, startOffsetInParent);
-
-    if (!newRange) {
-        console.error("Critical: Lost the selection during DOM normalization.");
-        return;
-    }
+    if (!newRange) return;
 
     const ann = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
@@ -87,12 +78,19 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
         text: originalText,
         path: getDomPath(newRange.startContainer),
         color: colorCode,
-        note: oldNotes,
+        note: oldNotes || "",
         timestamp: new Date().toISOString()
     };
 
-    applyMarkToRange(newRange, ann);
-    await saveToStorage(ann);
+    const mark = applyMarkToRange(newRange, ann);
+    
+    if (mark) {
+        await saveToStorage(ann);
+        if (isNoteMode) {
+            // Tiny delay to ensure the DOM has painted the new <mark>
+            setTimeout(() => createInlineEditor(mark, ann), 10);
+        }
+    }
     
     window.getSelection().removeAllRanges();
 }
@@ -258,13 +256,13 @@ function applyMarkToRange(range, ann) {
     mark.style.backgroundColor = ann.color;
     
     try {
-        // More stable than surroundContents for complex lists
         const fragment = range.extractContents();
         mark.appendChild(fragment);
         range.insertNode(mark);
     } catch (e) {
-        console.warn("Standard wrap failed, attempting leaf-node wrap.");
-        // Fallback to the leaf-node strategy we discussed earlier
+        console.warn("Standard wrap failed.");
+        // If this fails on complex sites, the text is still there, just not wrapped.
+        return null; 
     }
     
     if (ann.note) {
@@ -273,6 +271,7 @@ function applyMarkToRange(range, ann) {
         disp.textContent = ann.note;
         mark.after(disp);
     }
+    // Return the mark so createInlineEditor knows where to go
     return mark;
 }
 // Helper to find every text node between two points
@@ -334,9 +333,14 @@ function getDomPath(el) {
 const init = async () => {
     const res = await chrome.storage.local.get("annotations");
     const pageAnns = res.annotations?.filter(a => a.url === window.location.href) || [];
-    pageAnns.forEach(ann => {
+    
+    for (const ann of pageAnns) {
         const parent = document.querySelector(ann.path);
-        if (!parent) return;
+        if (!parent) continue;
+        
+        // Use a more precise check: don't highlight if this ID already exists in DOM
+        if (document.querySelector(`[data-id="${ann.id}"]`)) continue;
+
         const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
         let node;
         while(node = walker.nextNode()) {
@@ -349,7 +353,7 @@ const init = async () => {
                 break;
             }
         }
-    });
+    }
 };
 
 init();
