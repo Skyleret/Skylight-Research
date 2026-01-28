@@ -1,16 +1,16 @@
 /**
  * OMNI RESEARCH - CONTENT SCRIPT
- * Handles: Persistent Highlights, Inline Note Editing, and Context Menu Actions.
+ * Final Cleaned Version with Collision Detection & Inline Notes
  */
 
 let lastRightClickElement = null;
 
-// 1. TRACK CONTEXT: Keep track of what was clicked for the 'Remove' command
+// 1. TRACK CONTEXT: For right-click removal
 document.addEventListener("contextmenu", (e) => {
     lastRightClickElement = e.target;
 });
 
-// 2. LISTEN: Commands from the Background Service Worker (Right-Click Menu)
+// 2. LISTEN: Commands from the Background Service Worker
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "DO_HIGHLIGHT") {
         const selection = window.getSelection();
@@ -28,9 +28,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// 3. EXECUTE: Create the data object and trigger rendering
+// 3. EXECUTE: The "macOS Preview" style logic
 async function executeHighlight(selection, isNoteMode) {
     const range = selection.getRangeAt(0);
+    
+    // COLLISION DETECTION: Clean up overlaps before highlighting
+    const container = range.commonAncestorContainer;
+    const parentElement = container.nodeType === 3 ? container.parentElement : container;
+    
+    if (parentElement.closest('.omni-highlight')) {
+        const existingMark = parentElement.closest('.omni-highlight');
+        await removeHighlight(existingMark); // Wait for cleanup
+        selection = window.getSelection(); // Refresh selection
+    }
+
     const ann = {
         id: Date.now().toString(),
         url: window.location.href,
@@ -42,6 +53,8 @@ async function executeHighlight(selection, isNoteMode) {
     };
 
     const mark = applyMarkToRange(range, ann);
+    if (!mark) return;
+
     selection.removeAllRanges();
 
     if (isNoteMode) {
@@ -51,7 +64,7 @@ async function executeHighlight(selection, isNoteMode) {
     }
 }
 
-// 4. EDITOR: The "Type on the Page" interface
+// 4. EDITOR: The Inline Editor logic
 function createInlineEditor(mark, ann) {
     const editor = document.createElement("span");
     editor.className = "omni-editor";
@@ -61,7 +74,6 @@ function createInlineEditor(mark, ann) {
     mark.after(editor);
     editor.focus();
 
-    // Auto-select "type note..." so user can just start typing
     const range = document.createRange();
     range.selectNodeContents(editor);
     const sel = window.getSelection();
@@ -81,7 +93,6 @@ function createInlineEditor(mark, ann) {
         saveToStorage(ann);
     };
 
-    // Allow 'Enter' to save the note
     editor.onkeydown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -90,7 +101,7 @@ function createInlineEditor(mark, ann) {
     };
 }
 
-// 5. RENDER: Physical insertion into the webpage
+// 5. RENDER: Physical DOM insertion
 function applyMarkToRange(range, ann) {
     const mark = document.createElement("mark");
     mark.className = "omni-highlight";
@@ -99,13 +110,16 @@ function applyMarkToRange(range, ann) {
     try {
         range.surroundContents(mark);
     } catch (e) {
-        // Fallback for complex selections spanning multiple tags
-        const contents = range.extractContents();
-        mark.appendChild(contents);
-        range.insertNode(mark);
+        try {
+            const contents = range.extractContents();
+            mark.appendChild(contents);
+            range.insertNode(mark);
+        } catch (innerError) {
+            console.error("Highlight Failure:", innerError);
+            return null;
+        }
     }
 
-    // If we're restoring from storage, show the note display
     if (ann.note) {
         const noteDisp = document.createElement("span");
         noteDisp.className = "omni-note-display";
@@ -115,11 +129,10 @@ function applyMarkToRange(range, ann) {
     return mark;
 }
 
-// 6. STORAGE & RECOVERY
+// 6. STORAGE & REMOVAL
 async function saveToStorage(ann) {
     const data = await chrome.storage.local.get("annotations");
     const all = data.annotations || [];
-    // If updating an existing note, replace it. Otherwise, add new.
     const index = all.findIndex(a => a.id === ann.id);
     if (index > -1) { all[index] = ann; } else { all.push(ann); }
     await chrome.storage.local.set({ annotations: all });
@@ -131,18 +144,20 @@ async function removeHighlight(mark) {
     const filtered = (data.annotations || []).filter(a => a.id !== id);
     await chrome.storage.local.set({ annotations: filtered });
     
-    // Clean up associated UI
-    if (mark.nextSibling && mark.nextSibling.className === "omni-note-display") {
-        mark.nextSibling.remove();
+    const next = mark.nextSibling;
+    if (next && (next.className === "omni-note-display" || next.className === "omni-editor")) {
+        next.remove();
     }
 
     const parent = mark.parentNode;
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-    mark.remove();
-    parent.normalize();
+    if (parent) {
+        while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+        mark.remove();
+        parent.normalize();
+    }
 }
 
-// Restore on Page Load
+// RESTORE & PATHING
 const init = async () => {
     const data = await chrome.storage.local.get("annotations");
     const pageAnnotations = data.annotations?.filter(ann => ann.url === window.location.href) || [];

@@ -1,28 +1,42 @@
+/* The Highlight itself */
 .omni-highlight {
     background-color: #ffeb3b !important;
     cursor: pointer;
+    position: relative;
+    /* We keep highlights at a normal level so they don't float over menus */
 }
 
-/* The Inline Note */
+/* The Inline Note Display */
 .omni-note-display {
     font-family: 'Georgia', serif !important;
     font-size: 0.9em !important;
-    color: #555 !important;
+    color: #111 !important; /* Force dark text for legibility */
     background: #fdf6e3 !important;
-    border-left: 2px solid #e6b422;
-    padding: 2px 8px;
-    margin-left: 5px;
-    display: inline-block;
-    font-style: italic;
-    border-radius: 4px;
+    border-left: 3px solid #e6b422 !important;
+    padding: 2px 10px !important;
+    margin: 0 5px !important;
+    display: inline-block !important;
+    font-style: italic !important;
+    border-radius: 4px !important;
+    
+    /* Ridiculously high z-index */
+    position: relative !important;
+    z-index: 2147483647 !important; 
+    
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1) !important;
 }
 
-/* The Live Editor */
+/* The Live Editor (While typing) */
 .omni-editor {
-    border: 1px solid #4a90e2;
-    outline: none;
-    background: #fff;
-    padding: 2px 5px;
-    min-width: 50px;
-    display: inline-block;
+    all: initial; /* Reset all website styles so they don't interfere */
+    font-family: sans-serif !important;
+    border: 2px solid #4a90e2 !important;
+    background: #fff !important;
+    color: #000 !important;
+    padding: 2px 8px !important;
+    min-width: 80px !important;
+    display: inline-block !important;
+    border-radius: 4px !important;
+    position: relative !important;
+    z-index: 2147483647 !important;
 }
