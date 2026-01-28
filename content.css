@@ -1,7 +1,12 @@
 .research-highlight {
-    position: relative !important;
-    padding: 1px 0;
-    cursor: pointer;
+    padding: 0 !important; /* Remove padding to avoid list spacing issues */
+    margin: 0 !important;
+    display: inline; /* Keep it inline with the text */
+}
+
+.research-highlight a {
+    color: inherit !important;
+    text-decoration: underline;
 }
 
 .research-note {

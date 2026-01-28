@@ -64,6 +64,7 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
     const ann = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         url: window.location.href,
+        title: document.title,
         text: selection.toString(),
         path: getDomPath(range.startContainer),
         color: colorCode,
@@ -186,28 +187,74 @@ function createInlineEditor(mark, ann) {
 }
 
 function applyMarkToRange(range, ann) {
-    const mark = document.createElement("mark");
-    mark.className = "research-highlight";
-    mark.dataset.id = ann.id;
-    mark.style.backgroundColor = ann.color; // CRITICAL
-    if (ann.color === "transparent") mark.style.borderBottom = "1px dashed #ccc";
-
-    try {
-        range.surroundContents(mark);
-    } catch (e) {
-        const cont = range.extractContents();
-        mark.appendChild(cont);
-        range.insertNode(mark);
-    }
+    const markClass = "research-highlight";
     
-    // Show note if it exists (important for reload)
+    // Check if the selection crosses multiple elements
+    if (range.startContainer !== range.endContainer) {
+        // COMPLEX HIGHLIGHT (The GeeksforGeeks Fix)
+        const nodes = getNodesInRange(range);
+        nodes.forEach(node => {
+            const r = document.createRange();
+            r.selectNodeContents(node);
+            
+            // Handle partial selections of the start/end nodes
+            if (node === range.startContainer) r.setStart(node, range.startOffset);
+            if (node === range.endContainer) r.setEnd(node, range.endOffset);
+            
+            const m = document.createElement("mark");
+            m.className = markClass;
+            m.dataset.id = ann.id;
+            m.style.backgroundColor = ann.color;
+            if (ann.color === "transparent") m.style.borderBottom = "1px dashed #ccc";
+            
+            try { r.surroundContents(m); } catch (e) { /* Skip non-text nodes */ }
+        });
+    } else {
+        // SIMPLE HIGHLIGHT
+        const m = document.createElement("mark");
+        m.className = markClass;
+        m.dataset.id = ann.id;
+        m.style.backgroundColor = ann.color;
+        if (ann.color === "transparent") m.style.borderBottom = "1px dashed #ccc";
+        range.surroundContents(m);
+    }
+
+    // Attach Note to the very end of the selection
     if (ann.note) {
         const disp = document.createElement("span");
         disp.className = "research-note";
         disp.textContent = ann.note;
-        mark.after(disp);
+        
+        // Find the last mark we just created to attach the note
+        const allNewMarks = document.querySelectorAll(`[data-id="${ann.id}"]`);
+        const lastMark = allNewMarks[allNewMarks.length - 1];
+        if (lastMark) lastMark.after(disp);
     }
-    return mark;
+    
+    return document.querySelector(`[data-id="${ann.id}"]`);
+}
+
+// Helper to find every text node between two points
+function getNodesInRange(range) {
+    const nodes = [];
+    const walker = document.createTreeWalker(
+        range.commonAncestorContainer,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: (node) => {
+                const r = document.createRange();
+                r.selectNodeContents(node);
+                return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 &&
+                       range.compareBoundaryPoints(Range.START_TO_END, r) > 0
+                    ? NodeFilter.FILTER_ACCEPT
+                    : NodeFilter.FILTER_REJECT;
+            }
+        }
+    );
+
+    let node;
+    while (node = walker.nextNode()) nodes.push(node);
+    return nodes;
 }
 // Storage helpers
 async function saveToStorage(ann) {
