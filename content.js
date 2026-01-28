@@ -55,29 +55,76 @@ function showFloatingMenu() {
 
 async function executeHighlight(selection, isNoteMode, colorCode) {
     if (selection.toString().trim().length === 0) return;
+    
+    const originalText = selection.toString();
     const range = selection.getRangeAt(0);
+    
+    // Find a stable parent (the closest DIV, P, or LI)
+    const container = range.commonAncestorContainer;
+    const parent = container.nodeType === 3 ? container.parentNode : container;
+    
+    // CALCULATE PIN: How many characters from the start of the 'parent' is this selection?
+    const preRange = document.createRange();
+    preRange.selectNodeContents(parent);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    const startOffsetInParent = preRange.toString().length;
 
-    // Step 1: "Cut" this area out of any existing highlights (macOS Preview style)
-    await surgicalProcess(range);
+    // 1. Clear old highlights and migrate notes
+    const oldNotes = await surgicalProcess(range, colorCode);
 
-    // Step 2: Apply the new highlight to the now-clean area
+    // 2. RE-PIN: Find the exact same spot in the "clean" DOM
+    const newRange = findRangeWithContext(parent, originalText, startOffsetInParent);
+
+    if (!newRange) {
+        console.error("Critical: Lost the selection during DOM normalization.");
+        return;
+    }
+
     const ann = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         url: window.location.href,
         title: document.title,
-        text: selection.toString(),
-        path: getDomPath(range.startContainer),
+        text: originalText,
+        path: getDomPath(newRange.startContainer),
         color: colorCode,
-        note: "",
+        note: oldNotes,
         timestamp: new Date().toISOString()
     };
 
-    const mark = applyMarkToRange(range, ann);
-    if (mark) {
-        if (isNoteMode) createInlineEditor(mark, ann);
-        else await saveToStorage(ann);
+    applyMarkToRange(newRange, ann);
+    await saveToStorage(ann);
+    
+    window.getSelection().removeAllRanges();
+}
+
+/**
+ * RE-LOCATE TEXT WITH CONTEXT
+ * This replaces the "indexOf" logic to prevent random jumps.
+ */
+function findRangeWithContext(parent, targetText, targetOffsetInParent) {
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    let currentTotalOffset = 0;
+    let node;
+    const range = document.createRange();
+    let foundStart = false;
+
+    while (node = walker.nextNode()) {
+        const nodeLength = node.textContent.length;
+        
+        // Check if our target selection starts in this text node
+        if (!foundStart && currentTotalOffset + nodeLength > targetOffsetInParent) {
+            range.setStart(node, targetOffsetInParent - currentTotalOffset);
+            foundStart = true;
+        }
+        
+        // Check if our target selection ends in this (or a later) text node
+        if (foundStart && currentTotalOffset + nodeLength >= targetOffsetInParent + targetText.length) {
+            range.setEnd(node, (targetOffsetInParent + targetText.length) - currentTotalOffset);
+            return range;
+        }
+        currentTotalOffset += nodeLength;
     }
-    selection.removeAllRanges();
+    return null;
 }
 
 async function handleSurgicalRemove(selection) {
@@ -91,10 +138,14 @@ async function handleSurgicalRemove(selection) {
 /**
  * THE MASTER BLADE: Splits or clears highlights based on a range
  */
-async function surgicalProcess(userRange) {
+async function surgicalProcess(userRange, newColor = null) {
     const allMarks = document.querySelectorAll('.research-highlight');
     
-    // Find highlights that touch the user selection
+    // 1. IMPORTANT: Extract the plain data from the range before we break the DOM
+    const targetText = userRange.toString();
+    const targetStartContainer = userRange.startContainer;
+    const targetStartOffset = userRange.startOffset;
+
     const targeted = Array.from(allMarks).filter(m => {
         const r = document.createRange();
         r.selectNodeContents(m);
@@ -102,15 +153,22 @@ async function surgicalProcess(userRange) {
                  userRange.compareBoundaryPoints(Range.START_TO_END, r) <= 0);
     });
 
+    let migratedNotes = [];
+
     for (const mark of targeted) {
         const oldColor = mark.style.backgroundColor;
         const markId = mark.dataset.id;
         const parent = mark.parentNode;
         
+        // Grab note
+        const data = await chrome.storage.local.get("annotations");
+        const oldAnn = (data.annotations || []).find(a => a.id === markId);
+        if (oldAnn?.note) migratedNotes.push(oldAnn.note);
+
         const markRange = document.createRange();
         markRange.selectNodeContents(mark);
 
-        // Calculate "Shrapnel" (prefix and suffix text)
+        // Calculate Shrapnel
         let t1 = "", t2 = "";
         if (markRange.compareBoundaryPoints(Range.START_TO_START, userRange) < 0) {
             const pre = markRange.cloneRange();
@@ -123,23 +181,29 @@ async function surgicalProcess(userRange) {
             t2 = post.toString();
         }
 
-        // Clean up the old mark
         await deleteAnnotationData(markId);
         const next = mark.nextSibling;
         if (next?.classList?.contains("research-note") || next?.classList?.contains("research-editor")) {
             next.remove();
         }
 
+        // UNWRAP
         while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
         mark.remove();
-        parent.normalize();
-
-        // Put the leftover pieces back with the old color
-        if (t1.trim().length > 0) reHighlight(parent, t1, oldColor);
-        if (t2.trim().length > 0) reHighlight(parent, t2, oldColor);
+        // DON'T normalize inside the loop!
+        
+        if (newColor !== oldColor) {
+            if (t1.trim().length > 0) await reHighlight(parent, t1, oldColor);
+            if (t2.trim().length > 0) await reHighlight(parent, t2, oldColor);
+        }
     }
+    
+    // Clean up the DOM once everything is unwrapped
+    document.body.normalize(); 
+    
+    return migratedNotes.join(" | ");
 }
-function reHighlight(parent, text, color) {
+async function reHighlight(parent, text, color) {
     const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
     let node;
     while(node = walker.nextNode()) {
@@ -150,8 +214,9 @@ function reHighlight(parent, text, color) {
             range.setEnd(node, idx + text.length);
             
             const ann = { 
-                id: Date.now() + Math.random().toString(36).substr(2, 5), 
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 5), 
                 url: window.location.href, 
+                title: document.title,
                 text: text, 
                 path: getDomPath(node), 
                 color: color, 
@@ -159,7 +224,7 @@ function reHighlight(parent, text, color) {
             };
             
             applyMarkToRange(range, ann);
-            saveToStorage(ann); // This makes sure the split highlight stays split
+            await saveToStorage(ann); // MUST BE AWAITED
             break;
         }
     }
@@ -187,53 +252,29 @@ function createInlineEditor(mark, ann) {
 }
 
 function applyMarkToRange(range, ann) {
-    const markClass = "research-highlight";
+    const mark = document.createElement("mark");
+    mark.className = "research-highlight";
+    mark.dataset.id = ann.id;
+    mark.style.backgroundColor = ann.color;
     
-    // Check if the selection crosses multiple elements
-    if (range.startContainer !== range.endContainer) {
-        // COMPLEX HIGHLIGHT (The GeeksforGeeks Fix)
-        const nodes = getNodesInRange(range);
-        nodes.forEach(node => {
-            const r = document.createRange();
-            r.selectNodeContents(node);
-            
-            // Handle partial selections of the start/end nodes
-            if (node === range.startContainer) r.setStart(node, range.startOffset);
-            if (node === range.endContainer) r.setEnd(node, range.endOffset);
-            
-            const m = document.createElement("mark");
-            m.className = markClass;
-            m.dataset.id = ann.id;
-            m.style.backgroundColor = ann.color;
-            if (ann.color === "transparent") m.style.borderBottom = "1px dashed #ccc";
-            
-            try { r.surroundContents(m); } catch (e) { /* Skip non-text nodes */ }
-        });
-    } else {
-        // SIMPLE HIGHLIGHT
-        const m = document.createElement("mark");
-        m.className = markClass;
-        m.dataset.id = ann.id;
-        m.style.backgroundColor = ann.color;
-        if (ann.color === "transparent") m.style.borderBottom = "1px dashed #ccc";
-        range.surroundContents(m);
+    try {
+        // More stable than surroundContents for complex lists
+        const fragment = range.extractContents();
+        mark.appendChild(fragment);
+        range.insertNode(mark);
+    } catch (e) {
+        console.warn("Standard wrap failed, attempting leaf-node wrap.");
+        // Fallback to the leaf-node strategy we discussed earlier
     }
-
-    // Attach Note to the very end of the selection
+    
     if (ann.note) {
         const disp = document.createElement("span");
         disp.className = "research-note";
         disp.textContent = ann.note;
-        
-        // Find the last mark we just created to attach the note
-        const allNewMarks = document.querySelectorAll(`[data-id="${ann.id}"]`);
-        const lastMark = allNewMarks[allNewMarks.length - 1];
-        if (lastMark) lastMark.after(disp);
+        mark.after(disp);
     }
-    
-    return document.querySelector(`[data-id="${ann.id}"]`);
+    return mark;
 }
-
 // Helper to find every text node between two points
 function getNodesInRange(range) {
     const nodes = [];
