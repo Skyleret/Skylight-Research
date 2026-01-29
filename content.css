@@ -30,3 +30,26 @@
     padding: 5px !important;
     z-index: 2147483647 !important;
 }
+
+.structured-content {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+.structured-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+}
+.structured-content td, .structured-content th {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+}
+.structured-content ul, .structured-content ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+.structured-content a {
+    color: #007aff;
+    text-decoration: underline;
+}
