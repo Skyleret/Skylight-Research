@@ -1,0 +1,999 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C2FAC0FD2F2AF4B500096655 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0FC2F2AF4B500096655 /* AppDelegate.swift */; };
+		C2FAC0FF2F2AF4B500096655 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0FE2F2AF4B500096655 /* SceneDelegate.swift */; };
+		C2FAC1022F2AF4B500096655 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1002F2AF4B500096655 /* LaunchScreen.storyboard */; };
+		C2FAC1052F2AF4B500096655 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1032F2AF4B500096655 /* Main.storyboard */; };
+		C2FAC10E2F2AF4B500096655 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC10D2F2AF4B500096655 /* AppDelegate.swift */; };
+		C2FAC1112F2AF4B500096655 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC10F2F2AF4B500096655 /* Main.storyboard */; };
+		C2FAC1182F2AF4B500096655 /* Skylight research Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2FAC1172F2AF4B500096655 /* Skylight research Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2FAC1222F2AF4B500096655 /* Skylight research Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C2FAC1212F2AF4B500096655 /* Skylight research Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C2FAC1272F2AF4B500096655 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EC2F2AF4B200096655 /* Main.html */; };
+		C2FAC1282F2AF4B500096655 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EC2F2AF4B200096655 /* Main.html */; };
+		C2FAC1292F2AF4B500096655 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EE2F2AF4B200096655 /* Icon.png */; };
+		C2FAC12A2F2AF4B500096655 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EE2F2AF4B200096655 /* Icon.png */; };
+		C2FAC12B2F2AF4B500096655 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EF2F2AF4B200096655 /* Style.css */; };
+		C2FAC12C2F2AF4B500096655 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0EF2F2AF4B200096655 /* Style.css */; };
+		C2FAC12D2F2AF4B500096655 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0F02F2AF4B200096655 /* Script.js */; };
+		C2FAC12E2F2AF4B500096655 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0F02F2AF4B200096655 /* Script.js */; };
+		C2FAC12F2F2AF4B500096655 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0F12F2AF4B200096655 /* ViewController.swift */; };
+		C2FAC1302F2AF4B500096655 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0F12F2AF4B200096655 /* ViewController.swift */; };
+		C2FAC1312F2AF4B500096655 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0F22F2AF4B400096655 /* Assets.xcassets */; };
+		C2FAC1322F2AF4B500096655 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC0F22F2AF4B400096655 /* Assets.xcassets */; };
+		C2FAC1332F2AF4B500096655 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0F42F2AF4B400096655 /* SafariWebExtensionHandler.swift */; };
+		C2FAC1342F2AF4B500096655 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC0F42F2AF4B400096655 /* SafariWebExtensionHandler.swift */; };
+		C2FAC14F2F2AF4B500096655 /* content.css in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1472F2AF4B500096655 /* content.css */; };
+		C2FAC1502F2AF4B500096655 /* manager.html in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1482F2AF4B500096655 /* manager.html */; };
+		C2FAC1512F2AF4B500096655 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1492F2AF4B500096655 /* background.js */; };
+		C2FAC1522F2AF4B500096655 /* manager.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14A2F2AF4B500096655 /* manager.js */; };
+		C2FAC1532F2AF4B500096655 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14B2F2AF4B500096655 /* manifest.json */; };
+		C2FAC1542F2AF4B500096655 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14C2F2AF4B500096655 /* content.js */; };
+		C2FAC1552F2AF4B500096655 /* Icon-128.png in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14D2F2AF4B500096655 /* Icon-128.png */; };
+		C2FAC1572F2AF4B500096655 /* content.css in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1472F2AF4B500096655 /* content.css */; };
+		C2FAC1582F2AF4B500096655 /* manager.html in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1482F2AF4B500096655 /* manager.html */; };
+		C2FAC1592F2AF4B500096655 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC1492F2AF4B500096655 /* background.js */; };
+		C2FAC15A2F2AF4B500096655 /* manager.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14A2F2AF4B500096655 /* manager.js */; };
+		C2FAC15B2F2AF4B500096655 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14B2F2AF4B500096655 /* manifest.json */; };
+		C2FAC15C2F2AF4B500096655 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14C2F2AF4B500096655 /* content.js */; };
+		C2FAC15D2F2AF4B500096655 /* Icon-128.png in Resources */ = {isa = PBXBuildFile; fileRef = C2FAC14D2F2AF4B500096655 /* Icon-128.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C2FAC1192F2AF4B500096655 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2FAC0E62F2AF4B100096655 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2FAC1162F2AF4B500096655;
+			remoteInfo = "Skylight research Extension (iOS)";
+		};
+		C2FAC1232F2AF4B500096655 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2FAC0E62F2AF4B100096655 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2FAC1202F2AF4B500096655;
+			remoteInfo = "Skylight research Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C2FAC13A2F2AF4B500096655 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C2FAC1182F2AF4B500096655 /* Skylight research Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1412F2AF4B500096655 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C2FAC1222F2AF4B500096655 /* Skylight research Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C2FAC0ED2F2AF4B200096655 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		C2FAC0EE2F2AF4B200096655 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		C2FAC0EF2F2AF4B200096655 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		C2FAC0F02F2AF4B200096655 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		C2FAC0F12F2AF4B200096655 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C2FAC0F22F2AF4B400096655 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2FAC0F42F2AF4B400096655 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		C2FAC0F92F2AF4B500096655 /* Skylight research.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Skylight research.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2FAC0FC2F2AF4B500096655 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C2FAC0FE2F2AF4B500096655 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		C2FAC1012F2AF4B500096655 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C2FAC1042F2AF4B500096655 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C2FAC1062F2AF4B500096655 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2FAC10B2F2AF4B500096655 /* Skylight research.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Skylight research.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2FAC10D2F2AF4B500096655 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C2FAC1102F2AF4B500096655 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C2FAC1122F2AF4B500096655 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2FAC1172F2AF4B500096655 /* Skylight research Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Skylight research Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2FAC11C2F2AF4B500096655 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2FAC1212F2AF4B500096655 /* Skylight research Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Skylight research Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2FAC1262F2AF4B500096655 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2FAC1472F2AF4B500096655 /* content.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = content.css; path = ../../content.css; sourceTree = "<group>"; };
+		C2FAC1482F2AF4B500096655 /* manager.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = manager.html; path = ../../manager.html; sourceTree = "<group>"; };
+		C2FAC1492F2AF4B500096655 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../background.js; sourceTree = "<group>"; };
+		C2FAC14A2F2AF4B500096655 /* manager.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = manager.js; path = ../../manager.js; sourceTree = "<group>"; };
+		C2FAC14B2F2AF4B500096655 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../manifest.json; sourceTree = "<group>"; };
+		C2FAC14C2F2AF4B500096655 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = ../../content.js; sourceTree = "<group>"; };
+		C2FAC14D2F2AF4B500096655 /* Icon-128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-128.png"; path = "../../Icon-128.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C2FAC0F62F2AF4B400096655 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1082F2AF4B500096655 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1142F2AF4B500096655 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC11E2F2AF4B500096655 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C2FAC0E52F2AF4B100096655 = {
+			isa = PBXGroup;
+			children = (
+				C2FAC0EA2F2AF4B200096655 /* Shared (App) */,
+				C2FAC0F32F2AF4B400096655 /* Shared (Extension) */,
+				C2FAC0FB2F2AF4B500096655 /* iOS (App) */,
+				C2FAC10C2F2AF4B500096655 /* macOS (App) */,
+				C2FAC11B2F2AF4B500096655 /* iOS (Extension) */,
+				C2FAC1252F2AF4B500096655 /* macOS (Extension) */,
+				C2FAC0FA2F2AF4B500096655 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C2FAC0EA2F2AF4B200096655 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC0F12F2AF4B200096655 /* ViewController.swift */,
+				C2FAC0F22F2AF4B400096655 /* Assets.xcassets */,
+				C2FAC0EB2F2AF4B200096655 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		C2FAC0EB2F2AF4B200096655 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC0EC2F2AF4B200096655 /* Main.html */,
+				C2FAC0EE2F2AF4B200096655 /* Icon.png */,
+				C2FAC0EF2F2AF4B200096655 /* Style.css */,
+				C2FAC0F02F2AF4B200096655 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C2FAC0F32F2AF4B400096655 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC1452F2AF4B500096655 /* Resources */,
+				C2FAC0F42F2AF4B400096655 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		C2FAC0FA2F2AF4B500096655 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC0F92F2AF4B500096655 /* Skylight research.app */,
+				C2FAC10B2F2AF4B500096655 /* Skylight research.app */,
+				C2FAC1172F2AF4B500096655 /* Skylight research Extension.appex */,
+				C2FAC1212F2AF4B500096655 /* Skylight research Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C2FAC0FB2F2AF4B500096655 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC0FC2F2AF4B500096655 /* AppDelegate.swift */,
+				C2FAC0FE2F2AF4B500096655 /* SceneDelegate.swift */,
+				C2FAC1002F2AF4B500096655 /* LaunchScreen.storyboard */,
+				C2FAC1032F2AF4B500096655 /* Main.storyboard */,
+				C2FAC1062F2AF4B500096655 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		C2FAC10C2F2AF4B500096655 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC10D2F2AF4B500096655 /* AppDelegate.swift */,
+				C2FAC10F2F2AF4B500096655 /* Main.storyboard */,
+				C2FAC1122F2AF4B500096655 /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		C2FAC11B2F2AF4B500096655 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC11C2F2AF4B500096655 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		C2FAC1252F2AF4B500096655 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC1262F2AF4B500096655 /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		C2FAC1452F2AF4B500096655 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C2FAC1472F2AF4B500096655 /* content.css */,
+				C2FAC1482F2AF4B500096655 /* manager.html */,
+				C2FAC1492F2AF4B500096655 /* background.js */,
+				C2FAC14A2F2AF4B500096655 /* manager.js */,
+				C2FAC14B2F2AF4B500096655 /* manifest.json */,
+				C2FAC14C2F2AF4B500096655 /* content.js */,
+				C2FAC14D2F2AF4B500096655 /* Icon-128.png */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C2FAC0F82F2AF4B400096655 /* Skylight research (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2FAC13B2F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research (iOS)" */;
+			buildPhases = (
+				C2FAC0F52F2AF4B400096655 /* Sources */,
+				C2FAC0F62F2AF4B400096655 /* Frameworks */,
+				C2FAC0F72F2AF4B400096655 /* Resources */,
+				C2FAC13A2F2AF4B500096655 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2FAC11A2F2AF4B500096655 /* PBXTargetDependency */,
+			);
+			name = "Skylight research (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Skylight research (iOS)";
+			productReference = C2FAC0F92F2AF4B500096655 /* Skylight research.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C2FAC10A2F2AF4B500096655 /* Skylight research (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2FAC1422F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research (macOS)" */;
+			buildPhases = (
+				C2FAC1072F2AF4B500096655 /* Sources */,
+				C2FAC1082F2AF4B500096655 /* Frameworks */,
+				C2FAC1092F2AF4B500096655 /* Resources */,
+				C2FAC1412F2AF4B500096655 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2FAC1242F2AF4B500096655 /* PBXTargetDependency */,
+			);
+			name = "Skylight research (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Skylight research (macOS)";
+			productReference = C2FAC10B2F2AF4B500096655 /* Skylight research.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C2FAC1162F2AF4B500096655 /* Skylight research Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2FAC1372F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research Extension (iOS)" */;
+			buildPhases = (
+				C2FAC1132F2AF4B500096655 /* Sources */,
+				C2FAC1142F2AF4B500096655 /* Frameworks */,
+				C2FAC1152F2AF4B500096655 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Skylight research Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Skylight research Extension (iOS)";
+			productReference = C2FAC1172F2AF4B500096655 /* Skylight research Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		C2FAC1202F2AF4B500096655 /* Skylight research Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2FAC13E2F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research Extension (macOS)" */;
+			buildPhases = (
+				C2FAC11D2F2AF4B500096655 /* Sources */,
+				C2FAC11E2F2AF4B500096655 /* Frameworks */,
+				C2FAC11F2F2AF4B500096655 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Skylight research Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Skylight research Extension (macOS)";
+			productReference = C2FAC1212F2AF4B500096655 /* Skylight research Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C2FAC0E62F2AF4B100096655 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					C2FAC0F82F2AF4B400096655 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					C2FAC10A2F2AF4B500096655 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					C2FAC1162F2AF4B500096655 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					C2FAC1202F2AF4B500096655 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+				};
+			};
+			buildConfigurationList = C2FAC0E92F2AF4B100096655 /* Build configuration list for PBXProject "Skylight research" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C2FAC0E52F2AF4B100096655;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C2FAC0FA2F2AF4B500096655 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C2FAC0F82F2AF4B400096655 /* Skylight research (iOS) */,
+				C2FAC10A2F2AF4B500096655 /* Skylight research (macOS) */,
+				C2FAC1162F2AF4B500096655 /* Skylight research Extension (iOS) */,
+				C2FAC1202F2AF4B500096655 /* Skylight research Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C2FAC0F72F2AF4B400096655 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC1292F2AF4B500096655 /* Icon.png in Resources */,
+				C2FAC1022F2AF4B500096655 /* LaunchScreen.storyboard in Resources */,
+				C2FAC1272F2AF4B500096655 /* Main.html in Resources */,
+				C2FAC12D2F2AF4B500096655 /* Script.js in Resources */,
+				C2FAC1312F2AF4B500096655 /* Assets.xcassets in Resources */,
+				C2FAC1052F2AF4B500096655 /* Main.storyboard in Resources */,
+				C2FAC12B2F2AF4B500096655 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1092F2AF4B500096655 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC12A2F2AF4B500096655 /* Icon.png in Resources */,
+				C2FAC12C2F2AF4B500096655 /* Style.css in Resources */,
+				C2FAC1112F2AF4B500096655 /* Main.storyboard in Resources */,
+				C2FAC12E2F2AF4B500096655 /* Script.js in Resources */,
+				C2FAC1322F2AF4B500096655 /* Assets.xcassets in Resources */,
+				C2FAC1282F2AF4B500096655 /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1152F2AF4B500096655 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC15D2F2AF4B500096655 /* Icon-128.png in Resources */,
+				C2FAC1592F2AF4B500096655 /* background.js in Resources */,
+				C2FAC15A2F2AF4B500096655 /* manager.js in Resources */,
+				C2FAC1582F2AF4B500096655 /* manager.html in Resources */,
+				C2FAC15B2F2AF4B500096655 /* manifest.json in Resources */,
+				C2FAC15C2F2AF4B500096655 /* content.js in Resources */,
+				C2FAC1572F2AF4B500096655 /* content.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC11F2F2AF4B500096655 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC1552F2AF4B500096655 /* Icon-128.png in Resources */,
+				C2FAC1512F2AF4B500096655 /* background.js in Resources */,
+				C2FAC1522F2AF4B500096655 /* manager.js in Resources */,
+				C2FAC1502F2AF4B500096655 /* manager.html in Resources */,
+				C2FAC1532F2AF4B500096655 /* manifest.json in Resources */,
+				C2FAC1542F2AF4B500096655 /* content.js in Resources */,
+				C2FAC14F2F2AF4B500096655 /* content.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C2FAC0F52F2AF4B400096655 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC12F2F2AF4B500096655 /* ViewController.swift in Sources */,
+				C2FAC0FD2F2AF4B500096655 /* AppDelegate.swift in Sources */,
+				C2FAC0FF2F2AF4B500096655 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1072F2AF4B500096655 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC1302F2AF4B500096655 /* ViewController.swift in Sources */,
+				C2FAC10E2F2AF4B500096655 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC1132F2AF4B500096655 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC1332F2AF4B500096655 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2FAC11D2F2AF4B500096655 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2FAC1342F2AF4B500096655 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C2FAC11A2F2AF4B500096655 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2FAC1162F2AF4B500096655 /* Skylight research Extension (iOS) */;
+			targetProxy = C2FAC1192F2AF4B500096655 /* PBXContainerItemProxy */;
+		};
+		C2FAC1242F2AF4B500096655 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2FAC1202F2AF4B500096655 /* Skylight research Extension (macOS) */;
+			targetProxy = C2FAC1232F2AF4B500096655 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C2FAC0EC2F2AF4B200096655 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2FAC0ED2F2AF4B200096655 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		C2FAC1002F2AF4B500096655 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2FAC1012F2AF4B500096655 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		C2FAC1032F2AF4B500096655 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2FAC1042F2AF4B500096655 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C2FAC10F2F2AF4B500096655 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2FAC1102F2AF4B500096655 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C2FAC1352F2AF4B500096655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C2FAC1362F2AF4B500096655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C2FAC1382F2AF4B500096655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research.Extension";
+				PRODUCT_NAME = "Skylight research Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C2FAC1392F2AF4B500096655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research.Extension";
+				PRODUCT_NAME = "Skylight research Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C2FAC13C2F2AF4B500096655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research";
+				PRODUCT_NAME = "Skylight research";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C2FAC13D2F2AF4B500096655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research";
+				PRODUCT_NAME = "Skylight research";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C2FAC13F2F2AF4B500096655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research.Extension";
+				PRODUCT_NAME = "Skylight research Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C2FAC1402F2AF4B500096655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research.Extension";
+				PRODUCT_NAME = "Skylight research Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C2FAC1432F2AF4B500096655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research";
+				PRODUCT_NAME = "Skylight research";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C2FAC1442F2AF4B500096655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Skylight research";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.Skylight-research";
+				PRODUCT_NAME = "Skylight research";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C2FAC0E92F2AF4B100096655 /* Build configuration list for PBXProject "Skylight research" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2FAC1352F2AF4B500096655 /* Debug */,
+				C2FAC1362F2AF4B500096655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2FAC1372F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2FAC1382F2AF4B500096655 /* Debug */,
+				C2FAC1392F2AF4B500096655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2FAC13B2F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2FAC13C2F2AF4B500096655 /* Debug */,
+				C2FAC13D2F2AF4B500096655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2FAC13E2F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2FAC13F2F2AF4B500096655 /* Debug */,
+				C2FAC1402F2AF4B500096655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2FAC1422F2AF4B500096655 /* Build configuration list for PBXNativeTarget "Skylight research (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2FAC1432F2AF4B500096655 /* Debug */,
+				C2FAC1442F2AF4B500096655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C2FAC0E62F2AF4B100096655 /* Project object */;
+}
