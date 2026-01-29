@@ -251,54 +251,54 @@ function createInlineEditor(mark, ann) {
 }
 
 function applyMarkToRange(range, ann) {
-    const markClass = "research-highlight";
-    
-    // Check if the selection is complex (crosses multiple nodes)
+    const markId = ann.id;
+
+    // 1. Perform the wrap (Leaf-Node Strategy)
     if (range.startContainer !== range.endContainer) {
         const nodes = getNodesInRange(range);
         nodes.forEach(node => {
             const r = document.createRange();
             r.selectNodeContents(node);
-            
             if (node === range.startContainer) r.setStart(node, range.startOffset);
             if (node === range.endContainer) r.setEnd(node, range.endOffset);
             
             const m = document.createElement("mark");
-            m.className = markClass;
-            m.dataset.id = ann.id;
+            m.className = "research-highlight";
+            m.dataset.id = markId;
             m.style.backgroundColor = ann.color;
-            
-            try { r.surroundContents(m); } catch (e) { /* Skip non-text nodes */ }
+            try { r.surroundContents(m); } catch (e) {}
         });
     } else {
-        // Simple selection within one text node
         const m = document.createElement("mark");
-        m.className = markClass;
-        m.dataset.id = ann.id;
+        m.className = "research-highlight";
+        m.dataset.id = markId;
         m.style.backgroundColor = ann.color;
-        try {
-            range.surroundContents(m);
-        } catch (e) {
-            // Last resort fallback
+        try { range.surroundContents(m); } catch (e) {
             const frag = range.extractContents();
             m.appendChild(frag);
             range.insertNode(m);
         }
     }
 
-    // Attach Note to the last fragment of the highlight
-    if (ann.note) {
-        const allNewMarks = document.querySelectorAll(`[data-id="${ann.id}"]`);
-        const lastMark = allNewMarks[allNewMarks.length - 1];
-        if (lastMark) {
-            const disp = document.createElement("span");
-            disp.className = "research-note";
-            disp.textContent = ann.note;
-            lastMark.after(disp);
+    // 2. ATTACH NOTE TO THE ABSOLUTE LAST FRAGMENT
+    // We use a timeout to ensure the DOM has finished the 'surroundContents'
+    setTimeout(() => {
+        const fragments = document.querySelectorAll(`mark[data-id="${markId}"]`);
+        if (fragments.length > 0) {
+            const lastFragment = fragments[fragments.length - 1];
+            
+            // Prevent duplicate notes during re-renders
+            const existingNote = lastFragment.nextElementSibling;
+            if (ann.note && (!existingNote || !existingNote.classList.contains("research-note"))) {
+                const disp = document.createElement("span");
+                disp.className = "research-note";
+                disp.textContent = ann.note;
+                lastFragment.after(disp);
+            }
         }
-    }
-    
-    return document.querySelector(`[data-id="${ann.id}"]`);
+    }, 10);
+
+    return document.querySelector(`mark[data-id="${markId}"]`);
 }
 // Helper to find every text node between two points
 function getNodesInRange(range) {
@@ -356,16 +356,32 @@ function getDomPath(el) {
     return stack.join(" > ");
 }
 
+const observer = new MutationObserver((mutations) => {
+    // Only refresh if the change wasn't caused by our own highlights
+    const isOurChange = mutations.some(m => 
+        Array.from(m.addedNodes).some(n => n.classList?.contains('research-highlight'))
+    );
+    
+    if (!isOurChange) {
+        clearTimeout(refreshTimeout);
+        refreshTimeout = setTimeout(init, 2000);
+    }
+});
+observer.observe(document.body, { childList: true, subtree: true });
+
 const init = async () => {
     const res = await chrome.storage.local.get("annotations");
     const pageAnns = res.annotations?.filter(a => a.url === window.location.href) || [];
     
-    for (const ann of pageAnns) {
-        const parent = document.querySelector(ann.path);
-        if (!parent) continue;
+    pageAnns.forEach(ann => {
+        // Skip if already rendered
+        if (document.querySelector(`mark[data-id="${ann.id}"]`)) return;
+
+        // Try 1: Try the saved Path
+        let parent = document.querySelector(ann.path);
         
-        // Use a more precise check: don't highlight if this ID already exists in DOM
-        if (document.querySelector(`[data-id="${ann.id}"]`)) continue;
+        // Try 2: If path fails, use the Body as parent (Search everywhere)
+        if (!parent) parent = document.body;
 
         const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
         let node;
@@ -376,10 +392,14 @@ const init = async () => {
                 range.setStart(node, idx);
                 range.setEnd(node, idx + ann.text.length);
                 applyMarkToRange(range, ann);
-                break;
+                // Note: We don't 'break' here in case the highlight spans nodes
             }
         }
-    }
+    });
 };
+
+// RUN ONCE ON START
+if (document.readyState === "complete") init();
+else window.addEventListener("load", init);
 
 init();
