@@ -20,40 +20,68 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // --- 3. UI COMPONENTS ---
 function showFloatingMenu() {
     const selection = window.getSelection();
-    if (selection.rangeCount === 0 || selection.toString().trim() === "") return;
+    // We allow the menu to show if there's a selection OR if we just want to rescan
+    const hasSelection = selection.rangeCount > 0 && selection.toString().trim() !== "";
 
     const oldMenu = document.getElementById("research-popup-menu");
     if (oldMenu) oldMenu.remove();
 
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-
     const menu = document.createElement("div");
     menu.id = "research-popup-menu";
+    
+    // Position logic: If selection exists, put it near text. Otherwise, top right.
+    if (hasSelection) {
+        const rect = selection.getRangeAt(0).getBoundingClientRect();
+        Object.assign(menu.style, {
+            position: "fixed", top: `${rect.top - 50}px`, left: `${rect.left}px`
+        });
+    } else {
+        Object.assign(menu.style, {
+            position: "fixed", top: "20px", right: "20px"
+        });
+    }
+
     Object.assign(menu.style, {
-        position: "fixed", top: `${rect.top - 50}px`, left: `${rect.left}px`,
         zIndex: "2147483647", backgroundColor: "#222", padding: "8px",
         borderRadius: "20px", display: "flex", gap: "10px", boxShadow: "0 4px 15px rgba(0,0,0,0.4)"
     });
 
-    const options = [
-        { color: "#ffeb3b", label: "🟡", type: "HL" },
-        { color: "#81d4fa", label: "🔵", type: "HL" },
-        { color: "transparent", label: "🫥", type: "HL" },
-        { color: null, label: "❌", type: "DEL" }
-    ];
+    // 1. Highlight Options (Only show if text is selected)
+    if (hasSelection) {
+        const options = [
+            { color: "#ffeb3b", label: "🟡", type: "HL" },
+            { color: "#81d4fa", label: "🔵", type: "HL" },
+            { color: "transparent", label: "🫥", type: "HL" },
+            { color: null, label: "❌", type: "DEL" }
+        ];
 
-    options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.textContent = opt.label;
-        btn.style.cssText = "background:none; border:none; cursor:pointer; font-size:18px;";
-        btn.onclick = (e) => {
-            if (opt.type === "DEL") handleSurgicalRemove(selection);
-            else executeHighlight(selection, e.shiftKey, opt.color);
-            menu.remove();
-        };
-        menu.appendChild(btn);
-    });
+        options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.textContent = opt.label;
+            btn.style.cssText = "background:none; border:none; cursor:pointer; font-size:18px;";
+            btn.onclick = (e) => {
+                if (opt.type === "DEL") handleSurgicalRemove(selection);
+                else executeHighlight(selection, e.shiftKey, opt.color);
+                menu.remove();
+            };
+            menu.appendChild(btn);
+        });
+    }
+
+    // 2. THE RESCAN BUTTON (Always shows)
+    const rescanBtn = document.createElement("button");
+    rescanBtn.textContent = "🔄";
+    rescanBtn.title = "Rescan page for missing highlights";
+    rescanBtn.style.cssText = "background:none; border:none; cursor:pointer; font-size:18px; border-left: 1px solid #444; padding-left: 10px;";
+    rescanBtn.onclick = () => {
+        init(); // Trigger the highlight logic manually
+        rescanBtn.textContent = "⌛";
+        setTimeout(() => { 
+            rescanBtn.textContent = "✅"; 
+            setTimeout(() => menu.remove(), 1000);
+        }, 500);
+    };
+    menu.appendChild(rescanBtn);
 
     document.body.appendChild(menu);
     const closeMenu = (e) => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener("mousedown", closeMenu); }};
@@ -115,10 +143,31 @@ async function executeHighlight(selection, isNoteMode, colorCode) {
         projects: [currentProject]
     };
 
-    const mark = applyMarkToRange(newRange, ann);
+    // Pass 'true' as the third argument to skip immediate note placement
+    const mark = applyMarkToRange(newRange, ann, true); 
+    
     if (mark) {
         await saveToStorage(ann);
-        if (isNoteMode) setTimeout(() => createInlineEditor(mark, ann), 10);
+        
+        // This is the "Stable Anchor" logic that worked in your DEBUG trace
+        setTimeout(() => {
+            const allFragments = document.querySelectorAll(`mark[data-id="${ann.id}"]`);
+            if (allFragments.length === 0) return;
+
+            const lastMark = allFragments[allFragments.length - 1];
+
+            // Manual Note Placement for the "Instant" highlight
+            if (ann.note) {
+                const disp = document.createElement("span");
+                disp.className = "research-note";
+                disp.textContent = ann.note;
+                lastMark.after(disp);
+            }
+
+            if (isNoteMode) {
+                createInlineEditor(lastMark, ann);
+            }
+        }, 100); 
     }
 }
 
@@ -202,12 +251,13 @@ async function reHighlight(parent, text, color) {
 }
 
 // --- 6. DOM HELPERS ---
-function applyMarkToRange(range, ann) {
+// Add 'skipNotePlacement' as a parameter
+function applyMarkToRange(range, ann, skipNotePlacement = false) {
     const markId = ann.id;
-    const fragments = [];
     const nodes = getNodesInRange(range);
+    const fragments = [];
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         const r = document.createRange();
         r.selectNodeContents(node);
         if (node === range.startContainer) r.setStart(node, range.startOffset);
@@ -229,14 +279,16 @@ function applyMarkToRange(range, ann) {
         }
     });
 
-    if (ann.note && fragments.length > 0) {
+    // Only run this if NOT skipped (i.e., during page load/init)
+    if (!skipNotePlacement && ann.note && fragments.length > 0) {
         const lastMark = fragments[fragments.length - 1];
         const disp = document.createElement("span");
         disp.className = "research-note";
         disp.textContent = ann.note;
         lastMark.after(disp);
     }
-    return fragments[0];
+    
+    return document.querySelector(`mark[data-id="${markId}"]`);
 }
 
 function getNodesInRange(range) {
