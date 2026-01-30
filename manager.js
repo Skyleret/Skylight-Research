@@ -1,4 +1,81 @@
 let currentProject = "General";
+// Helper to turn your saved HTML into Markdown syntax
+function htmlToMd(html, text) {
+    if (!html) return `*${text}*`; // Fallback to italics for plain text
+    
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    
+    // 1. Headers: Keep them bold/standard so they remain structural
+    div.querySelectorAll('h1, h2, h3').forEach(h => {
+        h.innerHTML = `\n### ${h.innerText}\n\n`;
+    });
+    
+    // 2. Bold/Strong: If the original site had bold, we'll keep it
+    div.querySelectorAll('b, strong').forEach(b => { 
+        b.innerText = `**${b.innerText}**`; 
+    });
+    
+    // 3. List Items: Italics for the content of the list
+    div.querySelectorAll('li').forEach(li => {
+        li.innerHTML = `\n* *${li.innerText}*`; 
+    });
+
+    // 4. Paragraphs: Wrap content in italics
+    div.querySelectorAll('p').forEach(p => {
+        p.innerHTML = `\n*${p.innerText}*\n`;
+    });
+
+    let result = div.innerText.trim();
+    
+    // 5. Final check: If it's just a block of text without tags, wrap it
+    if (!html.includes('<p>') && !html.includes('<li>')) {
+        result = `*${result}*`;
+    }
+    
+    return result.replace(/\n{3,}/g, '\n\n'); 
+}
+
+document.getElementById("export-project").onclick = async () => {
+    const data = await chrome.storage.local.get("annotations");
+    const filtered = (data.annotations || []).filter(a => 
+        currentProject === "General" || (a.projects && a.projects.includes(currentProject))
+    );
+
+    let md = `# Research Project: ${currentProject}\n\n`;
+    const grouped = filtered.reduce((acc, curr) => {
+        if (!acc[curr.url]) acc[curr.url] = { title: curr.title, notes: [] };
+        acc[curr.url].notes.push(curr);
+        return acc;
+    }, {});
+
+    for (const url in grouped) {
+        md += `# Source: ${grouped[url].title}\n**URL:** ${url}\n\n`;
+        
+        grouped[url].notes.forEach(n => {
+            md += `---` + `\n\n`; // Top of Notecard
+            
+            // The Source Text (Italics handled by helper)
+            md += `${htmlToMd(n.html, n.text)}\n\n`; 
+            
+            // Your Note (Bolded)
+            if (n.note) {
+                md += `**Note: ${n.note}**\n\n`;
+            }
+            
+            md += `---` + `\n\n`; // Bottom of Notecard
+        });
+    }
+
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${currentProject.replace(/\s+/g, '_')}_Research.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
 
 async function renderManager() {
     const data = await chrome.storage.local.get(["annotations", "projects"]);

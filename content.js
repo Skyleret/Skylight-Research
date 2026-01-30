@@ -6,6 +6,13 @@
 // --- 1. GLOBAL SCOPE ---
 let currentProject = "General";
 let refreshTimeout = null;
+const colors = [
+{ id: "hl-yellow", title: "🟡 Yellow" },
+{ id: "hl-blue", title: "🔵 Blue" },
+{ id: "hl-green", title: "🟢 Green" },
+{ id: "hl-purple", title: "🟣 Purple" },
+{ id: "hl-none", title: "🫥 Transparent" }
+];
 
 // --- 2. MESSAGE LISTENER ---
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -49,8 +56,11 @@ function showFloatingMenu() {
     // 1. Highlight Options (Only show if text is selected)
     if (hasSelection) {
         const options = [
-            { color: "#ffeb3b", label: "🟡", type: "HL" },
-            { color: "#81d4fa", label: "🔵", type: "HL" },
+            { color: "#fff176", label: "🟡", name: "Amber Yellow" }, // Darker, warmer yellow
+            { color: "#b3e5fc", label: "🔵", name: "Sky Blue" },    // More blue depth
+            { color: "#c8e6c9", label: "🟢", name: "Sage Green" },  // Earthy, visible green
+            { color: "#f8bbd0", label: "🌸", name: "Rose Pink" },   // Distinct pink
+            { color: "#d1c4e9", label: "🟣", name: "Deep Lavender" }, // Richer purple
             { color: "transparent", label: "🫥", type: "HL" },
             { color: null, label: "❌", type: "DEL" }
         ];
