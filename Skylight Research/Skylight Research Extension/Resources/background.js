@@ -1,50 +1,48 @@
 /**
  * OMNI RESEARCH - BACKGROUND SCRIPT
  */
-
 chrome.runtime.onInstalled.addListener(() => {
-  // Context Menus
-  chrome.contextMenus.create({ id: "add-highlight", title: "Add Highlight", contexts: ["selection"] });
-  chrome.contextMenus.create({ id: "add-note", title: "Add Note", contexts: ["selection"] });
-  chrome.contextMenus.create({ id: "remove-highlight", title: "Remove Highlight", contexts: ["all"] });
-  
-  chrome.contextMenus.create({ 
-    id: "open-dashboard", 
-    title: "📊 Open Research Manager", 
-    contexts: ["all"] 
+  chrome.contextMenus.create({ id: "open-dashboard", title: "📊 Open Manager", contexts: ["all"] });
+  chrome.contextMenus.create({ id: "sep1", type: "separator", contexts: ["selection"] });
+  chrome.contextMenus.create({ id: "hl-parent", title: "🖋️ Highlight...", contexts: ["selection"] });
+
+  const colors = [
+    { id: "hl-yellow", title: "🟡 Yellow" },
+    { id: "hl-blue", title: "🔵 Blue" },
+    { id: "hl-green", title: "🟢 Green" },
+    { id: "hl-purple", title: "🟣 Purple" },
+    { id: "hl-none", title: "🫥 Transparent" }
+  ];
+
+  colors.forEach(c => {
+    chrome.contextMenus.create({ id: c.id, parentId: "hl-parent", title: c.title, contexts: ["selection"] });
   });
+
+  chrome.contextMenus.create({ id: "hl-note", title: "📝 Add Note & Highlight", contexts: ["selection"] });
+  chrome.contextMenus.create({ id: "remove-hl", title: "❌ Remove Highlight", contexts: ["selection"] });
 });
 
-chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  // 1. Safety check: Ensure we have a valid tab to talk to
-  if (!tab || !tab.id) return;
+const colorMap = {
+  "hl-yellow": "#ffeb3b", "hl-blue": "#81d4fa", "hl-green": "#ccff90", "hl-purple": "#e1bee7", "hl-none": "transparent"
+};
 
-  // 2. Handle Dashboard
-  if (info.menuItemId === "open-dashboard") {
-    chrome.tabs.create({ url: chrome.runtime.getURL("manager.html") });
-    return;
+// Listen for Alt+H
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "quick-highlight") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) chrome.tabs.sendMessage(tabs[0].id, { action: "OPEN_MENU" });
+    });
   }
+});
 
-  // 3. Map Menu IDs to Content Script Actions
-  const actionMap = {
-    "add-highlight": { action: "DO_HIGHLIGHT", mode: "simple" },
-    "add-note": { action: "DO_HIGHLIGHT", mode: "note" },
-    "remove-highlight": { action: "SURGICAL_REMOVE" }
-  };
-
-  const message = actionMap[info.menuItemId];
-
-  if (message) {
-    try {
-      // Send message to the specific tab
-      await chrome.tabs.sendMessage(tab.id, message);
-    } catch (err) {
-      console.error("Omni: Failed to send message. Is the content script loaded?", err);
-      
-      // Optional: Alert the user if they try to highlight on a restricted page
-      if (err.message.includes("Could not establish connection")) {
-        console.warn("Script not injected on this page (likely a system page).");
-      }
-    }
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "open-dashboard") {
+    chrome.tabs.create({ url: "manager.html" });
+  } else if (colorMap[info.menuItemId]) {
+    chrome.tabs.sendMessage(tab.id, { action: "QUICK_ACTION", color: colorMap[info.menuItemId], isNote: false });
+  } else if (info.menuItemId === "hl-note") {
+    chrome.tabs.sendMessage(tab.id, { action: "QUICK_ACTION", color: "#ffeb3b", isNote: true });
+  } else if (info.menuItemId === "remove-hl") {
+    chrome.tabs.sendMessage(tab.id, { action: "SURGICAL_REMOVE" });
   }
 });

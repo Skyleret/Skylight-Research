@@ -1,23 +1,55 @@
-.omni-highlight {
-    background-color: #ffeb3b !important;
-    position: relative !important;
+.research-highlight {
+    padding: 0 !important; /* Remove padding to avoid list spacing issues */
+    margin: 0 !important;
+    display: inline; /* Keep it inline with the text */
 }
 
-.omni-note-display {
+.research-highlight a {
+    color: inherit !important;
+    text-decoration: underline;
+}
+
+.research-note {
     background: #fdf6e3 !important;
     border-left: 3px solid #e6b422 !important;
     padding: 2px 8px !important;
     margin-left: 5px !important;
-    font-style: italic !important;
+    font-size: 0.85em !important;
     border-radius: 4px !important;
     display: inline-block !important;
+    color: #333 !important;
+    font-style: italic !important;
 }
 
-.omni-editor {
+.research-editor {
+    display: block !important;
+    width: 200px !important;
+    height: 60px !important;
+    margin-top: 5px !important;
     border: 2px solid #4a90e2 !important;
-    border-radius: 4px !important;
-    padding: 4px !important;
-    min-width: 150px !important;
+    padding: 5px !important;
     z-index: 2147483647 !important;
-    position: relative !important;
+}
+
+.structured-content {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+.structured-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+}
+.structured-content td, .structured-content th {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+}
+.structured-content ul, .structured-content ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+.structured-content a {
+    color: #007aff;
+    text-decoration: underline;
 }

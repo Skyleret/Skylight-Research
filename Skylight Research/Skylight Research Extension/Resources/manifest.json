@@ -1,7 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Skylight Research",
+  "name": "OmniResearch",
   "version": "1.1",
+  "commands": {
+    "quick-highlight": {
+      "suggested_key": { "default": "Alt+H" },
+      "description": "Highlight selection"
+    }
+  },
   "permissions": [
     "storage",
     "activeTab",

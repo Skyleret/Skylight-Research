@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>OmniResearch Manager</title>
+  <meta charset="UTF-8">
+  <title>Skylight Research Manager</title>
   <style>
     body { font-family: -apple-system, sans-serif; background: #f4f7f9; display: flex; height: 100vh; margin: 0; }
     #sidebar { width: 200px; background: #fff; border-right: 1px solid #ddd; padding: 20px; }
@@ -13,9 +14,13 @@
 </head>
 <body>
   <div id="sidebar">
-    <h3>Projects</h3>
-    <div id="project-list">General</div>
-  </div>
+  <h3>Projects</h3>
+  <button id="add-project" class="btn-primary" style="width:100%; margin-bottom:10px;">+ Add Project</button>
+  <div id="project-list"></div>
+  <hr>
+  <button id="export-project" class="btn-primary" style="width:100%; background:#28a745;">Export Project (.md)</button>
+  <button id="refresh-page" style="width:100%; margin-top:10px; font-size:11px;">Manual Refresh</button>
+</div>
   <div id="content">
     <div style="display:flex; justify-content: space-between;">
       <h2>Project: General Research</h2>
