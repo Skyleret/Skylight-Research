@@ -1,0 +1,23 @@
+.omni-highlight {
+    background-color: #ffeb3b !important;
+    position: relative !important;
+}
+
+.omni-note-display {
+    background: #fdf6e3 !important;
+    border-left: 3px solid #e6b422 !important;
+    padding: 2px 8px !important;
+    margin-left: 5px !important;
+    font-style: italic !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+}
+
+.omni-editor {
+    border: 2px solid #4a90e2 !important;
+    border-radius: 4px !important;
+    padding: 4px !important;
+    min-width: 150px !important;
+    z-index: 2147483647 !important;
+    position: relative !important;
+}
