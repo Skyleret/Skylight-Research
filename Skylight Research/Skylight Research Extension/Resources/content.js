@@ -230,10 +230,9 @@ async function surgicalProcess(userRange, newColor = null) {
         while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
         mark.remove();
         
-        if (newColor && newColor !== oldColor) {
-            if (t1.trim().length > 0) await reHighlight(parent, t1, oldColor);
-            if (t2.trim().length > 0) await reHighlight(parent, t2, oldColor);
-        }
+        const activeColor = newColor || oldColor;
+        if (t1.trim().length > 0) await reHighlight(parent, t1, oldColor);
+        if (t2.trim().length > 0) await reHighlight(parent, t2, oldColor);
     }
     document.body.normalize(); 
     return migratedNotes.join(" | ");
